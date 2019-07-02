@@ -8,11 +8,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,19 +46,29 @@ public class ComposeActivity extends AppCompatActivity {
     }
 
     public void submitTweet(View view) {
-        // prepare data intent
-        Intent data = new Intent();
-
-        // initialize TwitterClient & tweet
         TwitterClient client = new TwitterClient(this);
-        final Tweet[] tweet = {new Tweet()};
 
         client.sendTweet(etTweet.getText().toString(), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // prepare data intent
+                Intent data = new Intent();
+
+                // initialize TwitterClient & tweet
+                Tweet tweet;
 
                 try {
-                    tweet[0] = Tweet.fromJSON(response);
+                    tweet = Tweet.fromJSON(response);
+
+                    // pass relevant data back as a result
+                    data.putExtra("tweet", tweet);
+
+                    // return the data
+                    // set result code and bundle data for response
+                    setResult(RESULT_OK, data);
+
+                    // closes the activity, passing data to parent
+                    finish();
                     Log.i("ComposeActivity", "Composed tweet");
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -67,17 +79,20 @@ public class ComposeActivity extends AppCompatActivity {
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e("ComposeActivity", "Error in composing tweet");
             }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e("ComposeActivity", "Error in composing tweet");
+                Toast.makeText(ComposeActivity.this, errorResponse.toString(), Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                Log.e("ComposeActivity", "Error in composing tweet");
+            }
         });
 
-        // pass relevant data back as a result
-        data.putExtra("tweet", tweet[0]);
-
-        // return the data
-        // set result code and bundle data for response
-        setResult(RESULT_OK, data);
-
-        // closes the activity, passing data to parent
-        finish();
 
     }
 

@@ -138,6 +138,7 @@ public class TimelineActivity extends AppCompatActivity {
 
             tweets.add(0, tweet);
             tweetAdapter.notifyItemInserted(0);
+            rvTweets.scrollToPosition(0);
 
             // Toast the tweet to display temporarily on screen
             //Toast.makeText(this, tweet, Toast.LENGTH_LONG).show();
