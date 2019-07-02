@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -135,28 +134,14 @@ public class TimelineActivity extends AppCompatActivity {
         // REQUEST_CODE defined above
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
             // extract tweet value from result extras
-            String tweet = data.getExtras().getString("tweet");
+            Tweet tweet = (Tweet) data.getSerializableExtra("tweet");
+
+            tweets.add(0, tweet);
+            tweetAdapter.notifyItemInserted(0);
 
             // Toast the tweet to display temporarily on screen
-            Toast.makeText(this, tweet, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, tweet, Toast.LENGTH_LONG).show();
 
-
-            client.sendTweet(tweet, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    try {
-                        Tweet tweet = Tweet.fromJSON(response);
-
-                    } catch (JSONException e) {
-
-                    }
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-
-                }
-            });
         }
     }
 
