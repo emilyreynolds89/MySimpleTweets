@@ -39,6 +39,9 @@ public class TimelineActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout swipeContainer;
 
+    // MenuItem miActionProgressItem;
+    // ProgressBar progressBarFooter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +74,8 @@ public class TimelineActivity extends AppCompatActivity {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+
+        //setupListWithFooter();
     }
 
     private void populateTimeline() {
@@ -183,5 +188,32 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
     }
+
+    /*@Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        miActionProgressItem = menu.findItem(R.id.miActionProgress);
+        ProgressBar v = (ProgressBar) MenuItemCompat.getActionView(miActionProgressItem);
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    public void showProgressBar() {
+        miActionProgressItem.setVisible(true);
+    }
+
+    public void hideProgressBar() {
+        miActionProgressItem.setVisible(false);
+    }*/
+
+    // ads footer to the list default hidden progress
+    /*public void setupListWithFooter() {
+        ListView lvItems = findViewById(R.id.rvTweet);
+        View footer = getLayoutInflater().inflate(R.layout.footer_progress, null);
+        progressBarFooter = footer.findViewById(R.id.pbFooterLoading);
+
+        lvItems.addFooterView(footer);
+        lvItems.setAdapter(tweetAdapter);
+    }*/
+
 
 }

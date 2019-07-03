@@ -16,7 +16,7 @@
         android:autoText="true"
         android:gravity="left|top"
         android:maxLength="280"
-        android:textColor="#808080"
+        android:textColor="@color/medium_gray"
         android:textIsSelectable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -29,11 +29,12 @@
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+        android:background="@color/twitter_blue"
         android:onClick="submitTweet"
         android:text="Tweet"
-        app:layout_constraintTop_toBottomOf="@+id/etTweet"
+        android:textColor="@color/medium_gray"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteX="300dp" />
+        app:layout_constraintTop_toBottomOf="@+id/etTweet" />
 
     <TextView
         android:id="@+id/tvCount"
