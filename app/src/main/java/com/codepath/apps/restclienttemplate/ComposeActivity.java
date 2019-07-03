@@ -69,6 +69,7 @@ public class ComposeActivity extends AppCompatActivity {
 
 
     public void submitTweet(View view) {
+
         TwitterClient client = new TwitterClient(this);
 
         client.sendTweet(etTweet.getText().toString(), new JsonHttpResponseHandler() {
@@ -89,11 +90,13 @@ public class ComposeActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e("ComposeActivity", "Error in composing tweet");
+
             }
 
             @Override
@@ -101,15 +104,18 @@ public class ComposeActivity extends AppCompatActivity {
                 Log.e("ComposeActivity", "Error in composing tweet");
                 Toast.makeText(ComposeActivity.this, errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
+
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                 Log.e("ComposeActivity", "Error in composing tweet");
+
             }
         });
 
 
     }
+
 
 }

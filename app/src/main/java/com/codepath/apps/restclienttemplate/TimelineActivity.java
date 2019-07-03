@@ -3,6 +3,7 @@ package com.codepath.apps.restclienttemplate;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,7 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 
+import com.codepath.apps.restclienttemplate.models.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -39,8 +42,11 @@ public class TimelineActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout swipeContainer;
 
-    // MenuItem miActionProgressItem;
-    // ProgressBar progressBarFooter;
+    MenuItem miActionProgressItem;
+
+    private EndlessRecyclerViewScrollListener scrollListener;
+
+    public int max_id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +63,8 @@ public class TimelineActivity extends AppCompatActivity {
 
         tweetAdapter = new TweetAdapter(tweets);
 
-        rvTweets.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvTweets.setLayoutManager(linearLayoutManager);
         rvTweets.setAdapter(tweetAdapter);
 
         populateTimeline();
@@ -66,7 +73,7 @@ public class TimelineActivity extends AppCompatActivity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                fetchTimelineAsync(0);
+                fetchTimelineAsync(true);
             }
         });
 
@@ -76,14 +83,24 @@ public class TimelineActivity extends AppCompatActivity {
                 android.R.color.holo_red_light);
 
         //setupListWithFooter();
+
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadNextDataFromApi(page);
+            }
+        };
+
+        rvTweets.addOnScrollListener(scrollListener);
     }
 
     private void populateTimeline() {
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
+        client.getHomeTimeline(0, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("TwitterClient", response.toString());
+                hideProgressBar();
             }
 
             @Override
@@ -94,13 +111,16 @@ public class TimelineActivity extends AppCompatActivity {
                         Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
                         tweets.add(tweet);
 
+                        if (i == response.length() - 1) {
+                            max_id = (int) tweet.uid - 1;
+                        }
+
                         tweetAdapter.notifyItemInserted(tweets.size() - 1);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                 }
-
 
             }
 
@@ -133,9 +153,13 @@ public class TimelineActivity extends AppCompatActivity {
 
     // handles click action for menu item to compose tweet
     public void onComposeAction(MenuItem mi) {
+        showProgressBar();
+
         Intent intent = new Intent(TimelineActivity.this, ComposeActivity.class);
         intent.putExtra("mode", 2);
         startActivityForResult(intent, REQUEST_CODE);
+
+        hideProgressBar();
 
     }
 
@@ -152,11 +176,20 @@ public class TimelineActivity extends AppCompatActivity {
         }
     }
 
-    public void fetchTimelineAsync(int page) {
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
+    public void fetchTimelineAsync(boolean refresh) {
+
+        showProgressBar();
+
+        // if refresh false, indicates infinite pagination, not clearing already present tweets
+        final boolean clear = refresh;
+
+        client.getHomeTimeline(max_id, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                tweetAdapter.clear();
+                showProgressBar();
+                if (clear) {
+                    tweetAdapter.clear();
+                }
                 List<Tweet> tweets = new ArrayList<>();
                 for (int i = 0; i < response.length(); i++) {
                     try {
@@ -170,26 +203,35 @@ public class TimelineActivity extends AppCompatActivity {
 
                 tweetAdapter.addAll(tweets);
                 swipeContainer.setRefreshing(false);
+
+                hideProgressBar();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e("TimelineActivity", "Fetch timeline error: " + errorResponse.toString());
+                hideProgressBar();
+
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                 Log.e("TimelineActivity", "Fetch timeline error: " + errorResponse.toString());
+                hideProgressBar();
+
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e("TimelineActivity", "Fetch timeline error: ");
+                hideProgressBar();
+
             }
         });
+
     }
 
-    /*@Override
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         miActionProgressItem = menu.findItem(R.id.miActionProgress);
         ProgressBar v = (ProgressBar) MenuItemCompat.getActionView(miActionProgressItem);
@@ -203,17 +245,10 @@ public class TimelineActivity extends AppCompatActivity {
 
     public void hideProgressBar() {
         miActionProgressItem.setVisible(false);
-    }*/
+    }
 
-    // ads footer to the list default hidden progress
-    /*public void setupListWithFooter() {
-        ListView lvItems = findViewById(R.id.rvTweet);
-        View footer = getLayoutInflater().inflate(R.layout.footer_progress, null);
-        progressBarFooter = footer.findViewById(R.id.pbFooterLoading);
-
-        lvItems.addFooterView(footer);
-        lvItems.setAdapter(tweetAdapter);
-    }*/
-
-
+    public void loadNextDataFromApi(int offset) {
+        fetchTimelineAsync(false);
+        scrollListener.resetState();
+    }
 }

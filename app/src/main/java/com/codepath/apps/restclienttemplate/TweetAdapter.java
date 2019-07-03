@@ -95,4 +95,6 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
+
+
 }
