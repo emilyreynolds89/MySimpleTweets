@@ -28,6 +28,8 @@ public class ComposeActivity extends AppCompatActivity {
     Button btnTweet;
     TextView tvCount;
 
+    final String CHARACTER_COUNT = "280";
+
     AsyncHttpClient client;
 
     @Override
@@ -35,17 +37,15 @@ public class ComposeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose);
 
-        // initialize client
         client = new AsyncHttpClient();
 
-        // initialize and retrieve value of text in EditText
         etTweet = findViewById(R.id.etTweet);
-        String tweetBody = etTweet.getText().toString();
-
         btnTweet = findViewById(R.id.btnTweet);
-        tvCount = findViewById(R.id.tvCount);
-        tvCount.setText("0/280");
 
+        tvCount = findViewById(R.id.tvCount);
+        tvCount.setText("0/" + CHARACTER_COUNT);
+
+        // max length of tweet 280 characters
         etTweet.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -56,7 +56,7 @@ public class ComposeActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int length = etTweet.length();
                 String convert = String.valueOf(length);
-                tvCount.setText(convert+"/280");
+                tvCount.setText(convert+"/"+CHARACTER_COUNT);
             }
 
             @Override
@@ -74,25 +74,18 @@ public class ComposeActivity extends AppCompatActivity {
         client.sendTweet(etTweet.getText().toString(), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // prepare data intent
                 Intent data = new Intent();
-
-                // initialize TwitterClient & tweet
                 Tweet tweet;
 
                 try {
                     tweet = Tweet.fromJSON(response);
 
-                    // pass relevant data back as a result
                     data.putExtra("tweet", tweet);
-
-                    // return the data
-                    // set result code and bundle data for response
                     setResult(RESULT_OK, data);
-
-                    // closes the activity, passing data to parent
                     finish();
+
                     Log.i("ComposeActivity", "Composed tweet");
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
