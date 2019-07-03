@@ -47,6 +47,13 @@ public class Tweet implements Serializable {
             e.printStackTrace();
         }
 
+
+        relativeDate = relativeDate.replaceAll(" minute ago", "m");
+        relativeDate = relativeDate.replaceAll(" minutes ago", "m");
+
+        relativeDate = relativeDate.replaceAll(" hour ago", "h");
+        relativeDate = relativeDate.replaceAll(" hours ago", "h");
+
         return relativeDate;
     }
 
