@@ -62,7 +62,6 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         return mtweets.size();
     }
 
-    // create ViewHolder class
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView ivProfileImage;
         public TextView tvUserName;
@@ -70,16 +69,27 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         public TextView tvRelativeTimestamp;
 
 
-        // constructor, taking in an inflated layout
         public ViewHolder(View itemView) {
             super(itemView);
 
-            // perform findViewById lookups
             ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
             tvUserName = itemView.findViewById(R.id.tvUserName);
             tvBody = itemView.findViewById(R.id.tvBody);
             tvRelativeTimestamp = itemView.findViewById(R.id.tvRelativeTimestamp);
         }
+    }
+
+    // helper methods for refreshing timeline feature
+
+    public void clear() {
+        mtweets.clear();
+        notifyDataSetChanged();
+
+    }
+
+    public void addAll(List<Tweet> tweets) {
+        mtweets.addAll(tweets);
+        notifyDataSetChanged();
     }
 
 }
