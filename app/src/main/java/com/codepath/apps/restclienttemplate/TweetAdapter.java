@@ -66,7 +66,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         return mtweets.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView ivProfileImage;
         public TextView tvUserName;
         public TextView tvBody;
@@ -87,6 +87,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             ibReply = itemView.findViewById(R.id.ibReply);
             ibReply.setOnClickListener(this);
 
+            itemView.setOnClickListener(this);
+
         }
 
         @Override
@@ -94,6 +96,17 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             switch (v.getId()) {
                 case R.id.ibReply:
                     replyTweet(v.getRootView());
+                case R.id.tweet_item:
+                    int position = getAdapterPosition();
+
+                    if (position != RecyclerView.NO_POSITION) {
+                        Tweet tweet = mtweets.get(position);
+
+                        Intent intent = new Intent(context, DetailTweetActivity.class);
+                        intent.putExtra("tweet", tweet);
+
+                        context.startActivity(intent);
+                    }
             }
         }
 
