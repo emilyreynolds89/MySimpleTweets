@@ -1,11 +1,13 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,7 +21,7 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
 
     private List<Tweet> mtweets;
-    Context context;
+    static Context context;
 
     // pass in the Tweets array in the constructor
     public TweetAdapter(List<Tweet> tweets) {
@@ -56,6 +58,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 .bitmapTransform(new RoundedCornersTransformation(context, 5, 0))
                 .error(R.drawable.ic_launcher)
                 .into(holder.ivProfileImage);
+
     }
 
     @Override
@@ -63,12 +66,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         return mtweets.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView ivProfileImage;
         public TextView tvUserName;
         public TextView tvBody;
         public TextView tvRelativeTimestamp;
         public TextView screenName;
+        public ImageButton ibReply;
 
 
         public ViewHolder(View itemView) {
@@ -79,7 +83,20 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             tvBody = itemView.findViewById(R.id.tvBody);
             tvRelativeTimestamp = itemView.findViewById(R.id.tvRelativeTimestamp);
             screenName = itemView.findViewById(R.id.tvScreenName);
+
+            ibReply = itemView.findViewById(R.id.ibReply);
+            ibReply.setOnClickListener(this);
+
         }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.ibReply:
+                    replyTweet(v.getRootView());
+            }
+        }
+
     }
 
     // helper methods for refreshing timeline feature
@@ -95,6 +112,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-
+    public static void replyTweet(View view) {
+        TextView tvScreenName = view.findViewById(R.id.tvScreenName);
+        String screenName = (String) tvScreenName.getText();
+        Intent intent = new Intent(view.getContext(), ComposeActivity.class);
+        intent.putExtra("ScreenName", screenName);
+        context.startActivity(intent);
+    }
 
 }

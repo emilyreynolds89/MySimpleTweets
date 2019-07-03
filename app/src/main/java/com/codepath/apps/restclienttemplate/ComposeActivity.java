@@ -27,6 +27,7 @@ public class ComposeActivity extends AppCompatActivity {
     EditText etTweet;
     Button btnTweet;
     TextView tvCount;
+    String replyScreenName;
 
     final String CHARACTER_COUNT = "280";
 
@@ -41,6 +42,11 @@ public class ComposeActivity extends AppCompatActivity {
 
         etTweet = findViewById(R.id.etTweet);
         btnTweet = findViewById(R.id.btnTweet);
+
+        replyScreenName = getIntent().getStringExtra("ScreenName");
+        if (replyScreenName != null) {
+            etTweet.setText(replyScreenName + " ");
+        }
 
         tvCount = findViewById(R.id.tvCount);
         tvCount.setText("0/" + CHARACTER_COUNT);

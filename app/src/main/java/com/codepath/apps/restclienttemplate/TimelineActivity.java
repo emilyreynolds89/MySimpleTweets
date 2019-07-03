@@ -251,4 +251,5 @@ public class TimelineActivity extends AppCompatActivity {
         fetchTimelineAsync(false);
         scrollListener.resetState();
     }
+
 }
