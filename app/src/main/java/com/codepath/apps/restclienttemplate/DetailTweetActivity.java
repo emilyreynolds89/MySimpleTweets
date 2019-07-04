@@ -13,7 +13,7 @@ import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
-public class DetailTweetActivity extends AppCompatActivity {
+public class DetailTweetActivity extends AppCompatActivity implements View.OnClickListener {
 
     Tweet tweet;
 
@@ -47,13 +47,24 @@ public class DetailTweetActivity extends AppCompatActivity {
                 .bitmapTransform(new RoundedCornersTransformation(getBaseContext(), 5, 0))
                 .error(R.drawable.ic_launcher)
                 .into(ivProfileImage);
+
+        ibReply.setOnClickListener(this);
     }
 
-    public static void replyTweet(View view) {
-        TextView tvScreenName = view.findViewById(R.id.tvScreenName);
-        String screenName = (String) tvScreenName.getText();
+    @Override
+    public void onClick(View v) {
+        replyTweet(v);
+    }
+
+    public void replyTweet(View view) {
+        String replyName = "@";
+        if (screenName != null) {
+            replyName += (String) screenName.getText();
+        }
         Intent intent = new Intent(view.getContext(), ComposeActivity.class);
-        intent.putExtra("ScreenName", screenName);
+        intent.putExtra("ScreenName", replyName);
         view.getContext().startActivity(intent);
     }
+
+
 }
