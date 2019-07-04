@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate.models;
 
 import android.text.format.DateUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,6 +18,9 @@ public class Tweet implements Serializable {
     public long uid; // database ID for the tweet
     public String createdAt;
     public User user;
+    public Integer retweetCount;
+    public Integer favoriteCount;
+    public String imageUrl;
 
     // deserialize the JSON - take in a JSON object and return a Tweet object
     public static Tweet fromJSON(JSONObject jsonObject) throws JSONException {
@@ -27,6 +31,15 @@ public class Tweet implements Serializable {
         tweet.uid = jsonObject.getLong("id");
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+        tweet.retweetCount = jsonObject.getInt("retweet_count");
+        tweet.favoriteCount = jsonObject.getInt("favorite_count");
+
+        JSONObject entity = jsonObject.getJSONObject("entities");
+        JSONArray media = entity.getJSONArray("media");
+        if (media.length() != 0) {
+            JSONObject firstMedia = media.getJSONObject(0);
+            tweet.imageUrl = firstMedia.getString("media_url_https");
+        }
 
         return tweet;
 

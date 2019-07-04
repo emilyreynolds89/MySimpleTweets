@@ -53,6 +53,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         holder.tvBody.setText(tweet.body);
         holder.tvRelativeTimestamp.setText(tweet.getRelativeTimeAgo(tweet.createdAt));
         holder.screenName.setText("@"+tweet.user.screenName);
+        holder.tvFavoriteCount.setText(tweet.favoriteCount);
+        holder.tvRetweetCount.setText(tweet.retweetCount);
 
         Glide.with(context).load(tweet.user.profileImageUrl)
                 .bitmapTransform(new RoundedCornersTransformation(context, 5, 0))
@@ -73,6 +75,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         public TextView tvRelativeTimestamp;
         public TextView screenName;
         public ImageButton ibReply;
+        public ImageButton ibFavorite;
+        public ImageButton ibRetweet;
+        public TextView tvFavoriteCount;
+        public TextView tvRetweetCount;
 
 
         public ViewHolder(View itemView) {
@@ -86,6 +92,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
             ibReply = itemView.findViewById(R.id.ibReply);
             ibReply.setOnClickListener(this);
+
+            ibFavorite = itemView.findViewById(R.id.ibFavorite);
+            tvFavoriteCount = itemView.findViewById(R.id.tvFavoriteCount);
+            ibFavorite.setOnClickListener(this);
+
+            ibRetweet = itemView.findViewById(R.id.ibRetweet);
+            tvRetweetCount = itemView.findViewById(R.id.tvRetweetCount);
+            ibRetweet.setOnClickListener(this);
 
             itemView.setOnClickListener(this);
 
@@ -107,6 +121,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
                         context.startActivity(intent);
                     }
+                case R.id.ibFavorite:
+
+                case R.id.ibRetweet:
+
             }
         }
 

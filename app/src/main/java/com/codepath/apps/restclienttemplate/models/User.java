@@ -7,13 +7,11 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    // defining the attributes
     public String name;
     public long uid;
     public String screenName;
     public String profileImageUrl;
 
-    // deserialize the JSON
     public static User fromJSON(JSONObject jsonObject) throws JSONException {
         User user = new User();
 
