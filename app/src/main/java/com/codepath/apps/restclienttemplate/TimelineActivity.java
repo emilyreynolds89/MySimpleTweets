@@ -46,7 +46,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private EndlessRecyclerViewScrollListener scrollListener;
 
-    public int max_id = 0;
+    public long max_id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +66,11 @@ public class TimelineActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvTweets.setLayoutManager(linearLayoutManager);
         rvTweets.setAdapter(tweetAdapter);
+
+        getSupportActionBar().setTitle("Twitter");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.ic_launcher_twitter);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
 
         populateTimeline();
 
@@ -112,7 +117,7 @@ public class TimelineActivity extends AppCompatActivity {
                         tweets.add(tweet);
 
                         if (i == response.length() - 1) {
-                            max_id = (int) tweet.uid - 1;
+                            max_id = tweet.uid - 1;
                         }
 
                         tweetAdapter.notifyItemInserted(tweets.size() - 1);

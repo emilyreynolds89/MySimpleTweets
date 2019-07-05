@@ -78,8 +78,8 @@
 
     <ImageButton
         android:id="@+id/ibReply"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:background="#00FFFFFF"
@@ -91,9 +91,9 @@
 
     <ImageButton
         android:id="@+id/ibFavorite"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="64dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="8dp"
         android:background="#00FFFFFF"
         android:scaleType="fitXY"
@@ -104,9 +104,9 @@
 
     <ImageButton
         android:id="@+id/ibRetweet"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="64dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="8dp"
         android:background="#03FFFFFF"
         android:scaleType="fitXY"
@@ -118,7 +118,7 @@
     <TextView
         android:id="@+id/tvRetweetCount"
         android:layout_width="40dp"
-        android:layout_height="20dp"
+        android:layout_height="30dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
@@ -130,7 +130,7 @@
     <TextView
         android:id="@+id/tvFavoriteCount"
         android:layout_width="40dp"
-        android:layout_height="20dp"
+        android:layout_height="30dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:text="TextView"

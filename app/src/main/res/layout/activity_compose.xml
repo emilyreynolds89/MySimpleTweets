@@ -32,7 +32,7 @@
         android:background="@color/twitter_blue"
         android:onClick="submitTweet"
         android:text="Tweet"
-        android:textColor="@color/medium_gray"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etTweet" />
 

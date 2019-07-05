@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,15 +14,24 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
 
     private List<Tweet> mtweets;
     static Context context;
+
+    AsyncHttpClient client;
 
     // pass in the Tweets array in the constructor
     public TweetAdapter(List<Tweet> tweets) {
@@ -36,7 +46,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        // inflate the tweet row
+        client = new AsyncHttpClient();
+
         View tweetView = inflater.inflate(R.layout.item_tweet, parent, false);
         ViewHolder viewHolder = new ViewHolder(tweetView);
         return viewHolder;
@@ -53,8 +64,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         holder.tvBody.setText(tweet.body);
         holder.tvRelativeTimestamp.setText(tweet.getRelativeTimeAgo(tweet.createdAt));
         holder.screenName.setText("@"+tweet.user.screenName);
-        holder.tvFavoriteCount.setText(tweet.favoriteCount);
-        holder.tvRetweetCount.setText(tweet.retweetCount);
+        holder.tvFavoriteCount.setText(Integer.toString(tweet.favoriteCount));
+        holder.tvRetweetCount.setText(Integer.toString(tweet.retweetCount));
 
         Glide.with(context).load(tweet.user.profileImageUrl)
                 .bitmapTransform(new RoundedCornersTransformation(context, 5, 0))
@@ -107,12 +118,84 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
         @Override
         public void onClick(View v) {
+            int position = getAdapterPosition();
+
             switch (v.getId()) {
                 case R.id.ibReply:
                     replyTweet(v.getRootView());
-                case R.id.tweet_item:
-                    int position = getAdapterPosition();
+                    break;
 
+                case R.id.ibFavorite:
+                    if (position != RecyclerView.NO_POSITION) {
+                        Tweet tweet = mtweets.get(position);
+                        if (tweet.favoriteClicked == false) {
+                            tweet.favoriteCount += 1;
+                            tvFavoriteCount.setText(Integer.toString(tweet.favoriteCount));
+                            ibFavorite.setBackgroundResource(R.drawable.ic_vector_heart);
+                        } else {
+                            tweet.favoriteCount -= 1;
+                            tvFavoriteCount.setText(Integer.toString(tweet.favoriteCount));
+                            ibFavorite.setBackgroundResource(R.drawable.ic_vector_heart_stroke);
+                        }
+                        tweet.favoriteClicked = toggleButton(tweet.favoriteClicked);
+                    }
+                    break;
+
+                case R.id.ibRetweet:
+                    if (position != RecyclerView.NO_POSITION) {
+                        Tweet tweet = mtweets.get(position);
+                        if (tweet.retweetClicked == false) {
+                            tweet.retweetCount += 1;
+                            tvRetweetCount.setText(Integer.toString(tweet.retweetCount));
+                            ibRetweet.setBackgroundResource(R.drawable.ic_vector_retweet);
+                        } else {
+                            tweet.retweetCount -= 1;
+                            tvRetweetCount.setText(Integer.toString(tweet.retweetCount));
+                            ibRetweet.setBackgroundResource(R.drawable.ic_vector_retweet_stroke);
+                        }
+                        tweet.retweetClicked = toggleButton(tweet.retweetClicked);
+
+                        TwitterClient client = new TwitterClient(v.getContext());
+                        client.retweet(Long.toString(tweet.uid), new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                Tweet tweet;
+
+                                try {
+                                    tweet = Tweet.fromJSON(response);
+
+                                    //fetchTimelineAsync(true);
+
+                                    Log.i("TweetAdapter", "Retweet complete");
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                                Log.e("TweetAdapter", "Error in retweeting");
+
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                Log.e("TweetAdapter", "Error in retweeting");
+
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                                Log.e("TweetAdapter", "Error in retweeting");
+
+                            }
+                        });
+
+                    }
+                    break;
+                case R.id.tweet_item:
                     if (position != RecyclerView.NO_POSITION) {
                         Tweet tweet = mtweets.get(position);
 
@@ -121,10 +204,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
                         context.startActivity(intent);
                     }
-                case R.id.ibFavorite:
-
-                case R.id.ibRetweet:
-
+                    break;
             }
         }
 
@@ -149,6 +229,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         Intent intent = new Intent(view.getContext(), ComposeActivity.class);
         intent.putExtra("ScreenName", screenName);
         context.startActivity(intent);
+    }
+
+    public boolean toggleButton(boolean buttonOn) {
+        return !buttonOn;
     }
 
 }

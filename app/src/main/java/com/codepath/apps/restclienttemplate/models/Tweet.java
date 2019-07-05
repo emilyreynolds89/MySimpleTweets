@@ -21,6 +21,8 @@ public class Tweet implements Serializable {
     public Integer retweetCount;
     public Integer favoriteCount;
     public String imageUrl;
+    public boolean retweetClicked;
+    public boolean favoriteClicked;
 
     // deserialize the JSON - take in a JSON object and return a Tweet object
     public static Tweet fromJSON(JSONObject jsonObject) throws JSONException {
@@ -33,6 +35,8 @@ public class Tweet implements Serializable {
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
         tweet.retweetCount = jsonObject.getInt("retweet_count");
         tweet.favoriteCount = jsonObject.getInt("favorite_count");
+        tweet.retweetClicked = jsonObject.getBoolean("retweeted");
+        tweet.favoriteClicked = jsonObject.getBoolean("favorited");
 
         JSONObject entity = jsonObject.getJSONObject("entities");
         JSONArray media = entity.getJSONArray("media");

@@ -43,6 +43,8 @@ public class ComposeActivity extends AppCompatActivity {
         etTweet = findViewById(R.id.etTweet);
         btnTweet = findViewById(R.id.btnTweet);
 
+        getSupportActionBar().setTitle("Twitter");
+
         replyScreenName = getIntent().getStringExtra("ScreenName");
         if (replyScreenName != null) {
             etTweet.setText(replyScreenName + " ");
