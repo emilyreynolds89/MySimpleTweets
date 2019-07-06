@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -72,6 +73,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 .error(R.drawable.ic_launcher)
                 .into(holder.ivProfileImage);
 
+        if (tweet.imageUrl != null) {
+            holder.imageView.setVisibility(View.VISIBLE);
+            Glide.with(context).load(tweet.imageUrl)
+                    .error(R.drawable.ic_launcher)
+                    .into(holder.imageView);
+        }
     }
 
     @Override
@@ -85,6 +92,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         public TextView tvBody;
         public TextView tvRelativeTimestamp;
         public TextView screenName;
+        public ImageView imageView;
         public ImageButton ibReply;
         public ImageButton ibFavorite;
         public ImageButton ibRetweet;
@@ -99,7 +107,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             tvUserName = itemView.findViewById(R.id.tvUserName);
             tvBody = itemView.findViewById(R.id.tvBody);
             tvRelativeTimestamp = itemView.findViewById(R.id.tvRelativeTimestamp);
-            screenName = itemView.findViewById(R.id.tvScreenName);
+            imageView = itemView.findViewById(R.id.imageView);
+
+            screenName = itemView.findViewById(R.id.btnScreenName);
+            screenName.setOnClickListener(this);
 
             ibReply = itemView.findViewById(R.id.ibReply);
             ibReply.setOnClickListener(this);
@@ -111,6 +122,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             ibRetweet = itemView.findViewById(R.id.ibRetweet);
             tvRetweetCount = itemView.findViewById(R.id.tvRetweetCount);
             ibRetweet.setOnClickListener(this);
+
 
             itemView.setOnClickListener(this);
 
@@ -195,14 +207,24 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
                     }
                     break;
+                case R.id.btnScreenName:
+                    if (position != RecyclerView.NO_POSITION) {
+                        Tweet tweet = mtweets.get(position);
+
+                        Intent profileIntent = new Intent(context, ProfileActivity.class);
+                        profileIntent.putExtra("user", tweet.user);
+
+                        context.startActivity(profileIntent);
+                    }
+                    break;
                 case R.id.tweet_item:
                     if (position != RecyclerView.NO_POSITION) {
                         Tweet tweet = mtweets.get(position);
 
-                        Intent intent = new Intent(context, DetailTweetActivity.class);
-                        intent.putExtra("tweet", tweet);
+                        Intent detailIntent = new Intent(context, DetailTweetActivity.class);
+                        detailIntent.putExtra("tweet", tweet);
 
-                        context.startActivity(intent);
+                        context.startActivity(detailIntent);
                     }
                     break;
             }
@@ -224,8 +246,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     }
 
     public static void replyTweet(View view) {
-        TextView tvScreenName = view.findViewById(R.id.tvScreenName);
-        String screenName = (String) tvScreenName.getText();
+        Button btnScreenName = view.findViewById(R.id.btnScreenName);
+        String screenName = (String) btnScreenName.getText();
         Intent intent = new Intent(view.getContext(), ComposeActivity.class);
         intent.putExtra("ScreenName", screenName);
         context.startActivity(intent);

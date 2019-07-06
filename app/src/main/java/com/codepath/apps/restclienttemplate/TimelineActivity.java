@@ -200,6 +200,9 @@ public class TimelineActivity extends AppCompatActivity {
                     try {
                         Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
                         tweets.add(tweet);
+                        if (i == response.length() - 1) {
+                            max_id = tweet.uid;
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

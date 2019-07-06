@@ -29,6 +29,7 @@ public class DetailTweetActivity extends AppCompatActivity implements View.OnCli
     TextView tvBody;
     TextView tvRelativeTimestamp;
     TextView screenName;
+    ImageView imageView;
     ImageButton ibReply;
     ImageButton ibFavorite;
     ImageButton ibRetweet;
@@ -48,7 +49,8 @@ public class DetailTweetActivity extends AppCompatActivity implements View.OnCli
         tvUserName = findViewById(R.id.tvUserName);
         tvBody = findViewById(R.id.tvBody);
         tvRelativeTimestamp = findViewById(R.id.tvRelativeTimestamp);
-        screenName = findViewById(R.id.tvScreenName);
+        screenName = findViewById(R.id.btnScreenName);
+        imageView = findViewById(R.id.imageView);
         ibReply = findViewById(R.id.ibReply);
         ibRetweet = findViewById(R.id.ibRetweet);
         tvRetweetCount = findViewById(R.id.tvRetweetCount);
@@ -60,14 +62,23 @@ public class DetailTweetActivity extends AppCompatActivity implements View.OnCli
         tvUserName.setText(tweet.user.name);
         tvBody.setText(tweet.body);
         tvRelativeTimestamp.setText(tweet.getRelativeTimeAgo(tweet.createdAt));
-        screenName.setText(tweet.user.screenName);
         tvRetweetCount.setText(Integer.toString(tweet.retweetCount));
         tvFavoriteCount.setText(Integer.toString(tweet.favoriteCount));
+
+        screenName.setText("@" + tweet.user.screenName);
+        screenName.setOnClickListener(this);
 
         Glide.with(getBaseContext()).load(tweet.user.profileImageUrl)
                 .bitmapTransform(new RoundedCornersTransformation(getBaseContext(), 5, 0))
                 .error(R.drawable.ic_launcher)
                 .into(ivProfileImage);
+
+        if (tweet.imageUrl != null) {
+            imageView.setVisibility(View.VISIBLE);
+            Glide.with(getBaseContext()).load(tweet.imageUrl)
+                    .error(R.drawable.ic_launcher)
+                    .into(imageView);
+        }
 
         if (tweet.favoriteClicked == true) {
             ibFavorite.setBackgroundResource(R.drawable.ic_vector_heart);
@@ -76,9 +87,9 @@ public class DetailTweetActivity extends AppCompatActivity implements View.OnCli
         }
 
         if (tweet.retweetClicked == true) {
-            ibRetweet.setBackgroundResource(R.drawable.ic_vector_heart);
+            ibRetweet.setBackgroundResource(R.drawable.ic_vector_retweet);
         } else {
-            ibRetweet.setBackgroundResource(R.drawable.ic_vector_heart_stroke);
+            ibRetweet.setBackgroundResource(R.drawable.ic_vector_retweet_stroke);
         }
 
         ibReply.setOnClickListener(this);
@@ -146,6 +157,13 @@ public class DetailTweetActivity extends AppCompatActivity implements View.OnCli
                     }
                 });
 
+                break;
+
+            case R.id.btnScreenName:
+                Intent profileIntent = new Intent(DetailTweetActivity.this, ProfileActivity.class);
+                profileIntent.putExtra("user", tweet.user);
+
+                startActivity(profileIntent);
                 break;
         }
     }
