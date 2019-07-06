@@ -42,11 +42,9 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='video-1562375732.mp4' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-GIF created with [LiceCap](http://www.cockos.com/licecap/).
-
-Unable to record a walkthrough of implemented user stories - app would not run on emulator, only of Android phone synced to laptop.
+Created with a screeen recorder on Android phone.
 
 ## Notes
 
